@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kayan Yıldız</title>
+<style>
+:root{color-scheme:dark;box-sizing:border-box;--s:min(24vmin,170px)}
+*{box-sizing:inherit}
+html,body{height:100%;margin:0;background:#02060c;overflow:hidden}
+body{background:radial-gradient(ellipse at 50% 85%,#0d2236 0%,#071320 45%,#02060c 100%)}
+#stars{position:fixed;inset:0;pointer-events:none;animation:fade 2s ease both}
+#stars i{position:absolute;border-radius:50%;background:#cfe6ff;animation:tw var(--t) ease-in-out var(--o) infinite alternate}
+@keyframes tw{from{opacity:.15}to{opacity:.95}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.comet{position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;opacity:0;will-change:transform,opacity}
+.rot{position:absolute;left:0;top:0;width:0;height:0}
+.tail{position:absolute;right:0;border-radius:50%;transform-origin:100% 50%}
+.t1{top:calc(var(--s)*-.12);height:calc(var(--s)*.24);width:calc(var(--s)*5);background:linear-gradient(90deg,rgba(156,196,255,0),rgba(156,196,255,.16) 60%,rgba(232,242,255,.4));filter:blur(7px)}
+.t2{top:calc(var(--s)*-.035);height:calc(var(--s)*.07);width:calc(var(--s)*3.6);background:linear-gradient(90deg,rgba(255,255,255,0),rgba(207,230,255,.6) 65%,#fff);filter:blur(1.5px)}
+.glow{position:absolute;left:calc(var(--s)*-.8);top:calc(var(--s)*-.8);width:calc(var(--s)*1.6);height:calc(var(--s)*1.6);border-radius:50%;background:radial-gradient(circle,rgba(232,242,255,.28) 0,rgba(156,196,255,.08) 50%,rgba(156,196,255,0) 72%);animation:pulse 2.4s ease-in-out infinite alternate}
+@keyframes pulse{from{transform:scale(.92)}to{transform:scale(1.04)}}
+.star{position:absolute;left:calc(var(--s)*-.5);top:calc(var(--s)*-.5);width:var(--s);height:var(--s);overflow:visible;filter:drop-shadow(0 0 4px #dff0ff) drop-shadow(0 0 12px rgba(156,196,255,.4));animation:spin 7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pt{position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;box-shadow:0 0 6px #dff0ff}
+.sk{position:fixed;left:0;top:0;pointer-events:none;filter:drop-shadow(0 0 4px #dff0ff)}
+.heart{position:fixed;left:50%;top:50%;width:min(34vmin,240px);height:min(34vmin,240px);margin:calc(min(34vmin,240px)/-2) 0 0 calc(min(34vmin,240px)/-2);overflow:visible;pointer-events:none;filter:drop-shadow(0 0 6px rgba(255,120,175,.55)) drop-shadow(0 0 22px rgba(255,90,150,.3));animation:fade 2.5s ease .4s both}
+.hb{transform-origin:0 0;animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{0%,60%,100%{transform:scale(1)}10%{transform:scale(1.07)}20%{transform:scale(1)}30%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.hb{animation:none}}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<svg width="0" height="0" style="position:absolute"><defs><radialGradient id="sf"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#f1f6ff"/><stop offset="1" stop-color="#c3d0e4"/></radialGradient></defs></svg>
+<svg class="heart" viewBox="-60 -60 120 120" aria-label="G harfli kalp"><defs><linearGradient id="hg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#d6246e"/><stop offset=".55" stop-color="#ff5b9a"/><stop offset="1" stop-color="#ffb3d1"/></linearGradient></defs><g class="hb"><path d="M0 30C-52-8-36-48-14-46C-6-45 0-38 0-32C0-38 6-45 14-46C36-48 52-8 0 30Z" fill="url(#hg)" stroke="#ffd1e3" stroke-opacity=".7" stroke-width="1.2" stroke-linejoin="round"/><path d="M-30-22C-28-34-20-38-14-37" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round" fill="none"/><text x="0" y="-8" text-anchor="middle" dominant-baseline="central" font-family="Georgia,'Times New Roman',serif" font-size="44" font-weight="700" fill="#fff" style="filter:drop-shadow(0 0 3px rgba(190,30,100,.55))">G</text></g></svg>
+<div id="comets"></div>
+<script>
+(function(){
+var R=Math.random,S=document.getElementById('stars'),h='';
+var n=Math.round(Math.min(innerWidth*innerHeight/6500,260));
+for(var i=0;i<n;i++){var z=R()<.15?2.4:R()<.5?1.6:1;
+h+='<i style="left:'+(R()*100)+'%;top:'+(R()*100)+'%;width:'+z+'px;height:'+z+'px;--t:'+(1.5+R()*3).toFixed(1)+'s;--o:-'+(R()*4).toFixed(1)+'s"></i>';}
+S.innerHTML=h;
+
+/* 5 köşeli yıldız yolu */
+var d='';
+for(var i=0;i<10;i++){var r=i%2?20:46,an=-Math.PI/2+i*Math.PI/5;d+=(i?'L':'M')+(Math.cos(an)*r).toFixed(1)+' '+(Math.sin(an)*r).toFixed(1);}
+d+='Z';
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var BASE=function(){return Math.min(Math.min(innerWidth,innerHeight)*.24,170);};
+var N=4,CS=[],box=document.getElementById('comets');
+
+function spawn(c,x,y,ang){
+ var sparkle=R()<.2,e=document.createElement('div'),life=1200+R()*1400,dx=(R()-.5)*60*c.k,dy=(30+R()*90)*c.k,k;
+ if(sparkle){k=(8+R()*10)*(.6+c.k*.4);e.className='sk';
+  e.innerHTML='<svg width="'+k+'" height="'+k+'" viewBox="-6 -6 12 12" style="display:block"><path d="M0-6Q0 0 6 0Q0 0 0 6Q0 0-6 0Q0 0 0-6Z" fill="#f2f8ff"/></svg>';}
+ else{k=(1.5+R()*3)*(.6+c.k*.4);e.className='pt';e.style.width=e.style.height=k+'px';e.style.background=R()<.3?'#fff':'#bfe0ff';}
+ document.body.appendChild(e);
+ var back=R()*c.s*1.6,bx=x-Math.cos(ang)*back,by=y-Math.sin(ang)*back;
+ var an=e.animate([
+  {transform:'translate('+bx+'px,'+by+'px) scale(.4) rotate(0)',opacity:0},
+  {opacity:1,offset:.15},
+  {transform:'translate('+(bx+dx)+'px,'+(by+dy)+'px) scale(1) rotate('+(sparkle?90:0)+'deg)',opacity:0}
+ ],{duration:life,easing:'ease-out'});
+ an.onfinish=function(){e.remove()};
+}
+
+function reset(c,start){
+ var w=innerWidth,hh=innerHeight,dir=R()<.5?1:-1;
+ c.k=c.i==0?1:.38+R()*.34;
+ c.s=BASE()*c.k;
+ c.el.style.setProperty('--s',c.s+'px');
+ c.dur=(c.i==0?7500:5200+R()*3000);
+ c.start=start;
+ var y0=R()*.4*hh;
+ c.x0=dir>0?-.18*w:1.18*w;c.x2=dir>0?1.18*w:-.18*w;
+ c.y0=y0;c.y2=y0+(.3+R()*.4)*hh;
+ c.x1=(c.x0+c.x2)/2;c.y1=y0-(.05+R()*.25)*hh;
+ c.last=0;
+}
+
+for(var i=0;i<N;i++){
+ var el=document.createElement('div');el.className='comet';
+ el.innerHTML='<div class="rot"><div class="glow"></div><div class="tail t1"></div><div class="tail t2"></div><svg class="star" viewBox="-50 -50 100 100" style="animation-direction:'+(i%2?'reverse':'normal')+'"><path d="'+d+'" fill="url(#sf)" stroke="#dbe6f6" stroke-opacity=".7" stroke-width="1.2" stroke-linejoin="round"/><path d="'+d+'" transform="scale(.5)" fill="#fff" opacity=".85"/></svg></div>';
+ box.appendChild(el);
+ var c={i:i,el:el,rot:el.firstChild};
+ reset(c,performance.now()+(i==0?0:1500+i*2200+R()*1500));
+ CS.push(c);
+}
+
+function frame(now){
+ for(var j=0;j<CS.length;j++){
+  var c=CS[j],m=now-c.start;
+  if(reduce)m=c.dur*(.25+.18*j);
+  if(m<0){c.el.style.opacity=0;continue;}
+  if(m>c.dur){c.el.style.opacity=0;reset(c,now+700+R()*3500);continue;}
+  var u=m/c.dur,t=u*u*(3-2*u),q=1-t;
+  var x=q*q*c.x0+2*q*t*c.x1+t*t*c.x2,y=q*q*c.y0+2*q*t*c.y1+t*t*c.y2;
+  var dx=2*q*(c.x1-c.x0)+2*t*(c.x2-c.x1),dy=2*q*(c.y1-c.y0)+2*t*(c.y2-c.y1),ang=Math.atan2(dy,dx);
+  c.el.style.transform='translate('+x+'px,'+y+'px)';
+  c.rot.style.transform='rotate('+ang+'rad)';
+  c.el.style.opacity=Math.min(1,u/.08,(1-u)/.1);
+  if(!reduce&&now-c.last>35+(1-c.k)*45){c.last=now;spawn(c,x,y,ang);if(R()<.4)spawn(c,x,y,ang);}
+ }
+ requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
